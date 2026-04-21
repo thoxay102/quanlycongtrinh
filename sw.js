@@ -1,3 +1,12 @@
+
+// Thêm ở đầu file sw.js
+self.addEventListener('install', () => {
+    self.skipWaiting();
+});
+
+self.addEventListener('activate', (event) => {
+    event.waitUntil(self.clients.claim());
+});
 // sw.js - Service Worker cho PWA
 const CACHE_NAME = 'qlct-v1.0.0';
 const OFFLINE_URL = './offline.html';

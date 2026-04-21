@@ -12624,14 +12624,12 @@ shareSettlement: {
 	<script>
 		// ====================== PWA & SERVICE WORKER ======================
 		
-		// Đăng ký Service Worker
+		// Đăng ký Service Worker - KHÔNG dùng scope
 		if ('serviceWorker' in navigator) {
 			window.addEventListener('load', async () => {
 				try {
-					const registration = await navigator.serviceWorker.register('./sw.js', {
-						scope: '/'
-					});
-					
+					// QUAN TRỌNG: Bỏ scope, chỉ register sw.js
+					const registration = await navigator.serviceWorker.register('./sw.js');
 					console.log('✅ Service Worker registered:', registration);
 					
 					// Kiểm tra update
@@ -12647,24 +12645,9 @@ shareSettlement: {
 						});
 					});
 					
-					// Kiểm tra xem có đang bị controller cũ không
-					if (!navigator.serviceWorker.controller) {
-						console.log('📱 Page loaded without SW control, reloading...');
-						window.location.reload();
-					}
-					
 				} catch (error) {
 					console.error('❌ Service Worker registration failed:', error);
 				}
-			});
-			
-			// Xử lý khi có SW mới
-			let refreshing = false;
-			navigator.serviceWorker.addEventListener('controllerchange', () => {
-				if (refreshing) return;
-				refreshing = true;
-				console.log('🔄 New SW controlling, reloading...');
-				window.location.reload();
 			});
 		}
 		
