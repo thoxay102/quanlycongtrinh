@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cấu Hình Supabase - Lần Đầu Cài Đặt</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .setup-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .step-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        .copy-btn {
+            cursor: pointer;
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+        .copy-btn:hover {
+            background: #e0e0e0;
+        }
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 13px;
+        }
+        .success-icon {
+            color: #28a745;
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <!-- Header -->
+        <div class="text-center text-white mb-4">
+            <i class="fas fa-database fa-4x mb-3"></i>
+            <h1>Cấu Hình Supabase</h1>
+            <p class="lead">Vui lòng cấu hình kết nối Supabase để sử dụng ứng dụng</p>
+        </div>
+
+        <!-- Step 1: Tạo tài khoản Supabase -->
+        <div class="step-card">
+            <h3><span class="step-number">1</span> Tạo tài khoản Supabase</h3>
+            <p>Truy cập <a href="https://supabase.com" target="_blank">https://supabase.com</a> và đăng ký tài khoản miễn phí.</p>
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Gói miễn phí (Free Tier) cho phép tạo 2 dự án, đủ dùng cho ứng dụng của bạn.
+            </div>
+        </div>
+
+        <!-- Step 2: Tạo dự án mới -->
+        <div class="step-card">
+            <h3><span class="step-number">2</span> Tạo dự án mới</h3>
+            <ol>
+                <li>Nhấn nút <strong>"New Project"</strong></li>
+                <li>Đặt tên dự án: <code>QuanLyCongTrinh</code></li>
+                <li>Đặt mật khẩu database (ghi nhớ mật khẩu này)</li>
+                <li>Chọn khu vực gần nhất (VD: Southeast Asia)</li>
+                <li>Nhấn <strong>"Create new project"</strong></li>
+                <li>Chờ khoảng 2-3 phút để dự án khởi tạo</li>
+            </ol>
+        </div>
+
+        <!-- Step 3: Lấy thông tin cấu hình -->
+        <div class="step-card">
+            <h3><span class="step-number">3</span> Lấy thông tin kết nối</h3>
+            <p>Sau khi dự án tạo xong, vào mục <strong>Project Settings → API</strong>:</p>
+            <div class="mb-3">
+                <label class="form-label fw-bold">📋 Project URL:</label>
+                <div class="input-group">
+                    <input type="text" id="supabase-url" class="form-control" placeholder="https://xxxxx.supabase.co">
+                    <button class="btn btn-outline-secondary" onclick="copyToClipboard('supabase-url')">Sao chép</button>
+                </div>
+                <small class="text-muted">Lấy từ mục <strong>Project URL</strong></small>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">🔑 anon public key:</label>
+                <div class="input-group">
+                    <input type="text" id="supabase-key" class="form-control" placeholder="eyJhbGciOiJIUzI1NiIs...">
+                    <button class="btn btn-outline-secondary" onclick="copyToClipboard('supabase-key')">Sao chép</button>
+                </div>
+                <small class="text-muted">Lấy từ mục <strong>Project API keys → anon public</strong></small>
+            </div>
+        </div>
+
+        <!-- Step 4: Tạo bảng dữ liệu -->
+        <div class="step-card">
+            <h3><span class="step-number">4</span> Tạo bảng dữ liệu</h3>
+            <p>Vào mục <strong>SQL Editor</strong>, tạo query mới và chạy đoạn SQL sau:</p>
+            <button class="btn btn-sm btn-secondary mb-2" onclick="copySQL()">
+                <i class="fas fa-copy"></i> Sao chép toàn bộ SQL
+            </button>
+            <pre id="sql-code" style="max-height: 300px; overflow-y: auto;"><code>-- =====================================================
+-- TẠO BẢNG USERS (ĐĂNG NHẬP)
+-- =====================================================
+CREATE TABLE IF NOT EXISTS public.users (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    username TEXT NOT NULL UNIQUE,
+    fullname TEXT,
+    password TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'user' CHECK (role IN ('admin', 'manager', 'user')),
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Tài khoản mặc định
+INSERT INTO public.users (username, fullname, password, role) VALUES
+('admin', 'Quản trị viên', 'admin123', 'admin'),
+('manager', 'Quản lý', 'manager123', 'manager'),
+('user', 'Người dùng', 'user123', 'user')
+ON CONFLICT (username) DO NOTHING;
+
+-- =====================================================
+-- CÁC BẢNG NGHIỆP VỤ
+-- =====================================================
+CREATE TABLE IF NOT EXISTS projects (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    name TEXT NOT NULL,
+    place TEXT,
+    start_date DATE,
+    end_date DATE,
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS members (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    name TEXT NOT NULL,
+    type TEXT CHECK (type IN ('day', 'hour', 'hybrid', 'share')),
+    rate NUMERIC,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS jobs (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS timesheets (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    date DATE NOT NULL,
+    member_id UUID REFERENCES members(id),
+    project_id UUID REFERENCES projects(id),
+    job_id UUID REFERENCES jobs(id),
+    value NUMERIC,
+    notes TEXT,
+    is_settled BOOLEAN DEFAULT false,
+    closure_id UUID,
+    settlement_date TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS cash (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    date DATE NOT NULL,
+    project_id UUID REFERENCES projects(id),
+    type TEXT CHECK (type IN ('in', 'out', 'advance')),
+    amount NUMERIC,
+    notes TEXT,
+    member_id UUID REFERENCES members(id),
+    payee_id UUID REFERENCES members(id),
+    is_settled BOOLEAN DEFAULT false,
+    closure_id UUID,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS closures (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    project_id UUID REFERENCES projects(id),
+    all_project_ids JSONB,
+    member_id UUID REFERENCES members(id),
+    date DATE,
+    amount NUMERIC,
+    debt_left NUMERIC,
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS logs (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    timestamp TIMESTAMPTZ DEFAULT NOW(),
+    user_id TEXT,
+    user_name TEXT,
+    action TEXT,
+    entity_type TEXT,
+    entity_id TEXT,
+    details JSONB
+);
+
+-- TẮT RLS (Row Level Security) để đơn giản hóa
+ALTER TABLE users DISABLE ROW LEVEL SECURITY;
+ALTER TABLE projects DISABLE ROW LEVEL SECURITY;
+ALTER TABLE members DISABLE ROW LEVEL SECURITY;
+ALTER TABLE jobs DISABLE ROW LEVEL SECURITY;
+ALTER TABLE timesheets DISABLE ROW LEVEL SECURITY;
+ALTER TABLE cash DISABLE ROW LEVEL SECURITY;
+ALTER TABLE closures DISABLE ROW LEVEL SECURITY;
+ALTER TABLE logs DISABLE ROW LEVEL SECURITY;</code></pre>
+            <div class="alert alert-warning mt-2">
+                <i class="fas fa-exclamation-triangle"></i> 
+                <strong>Quan trọng:</strong> Sau khi chạy SQL thành công, bạn sẽ thấy danh sách các bảng được tạo.
+            </div>
+        </div>
+
+        <!-- Step 5: Nhập cấu hình và kiểm tra -->
+        <div class="step-card">
+            <h3><span class="step-number">5</span> Nhập cấu hình & Kiểm tra</h3>
+            <div class="mb-3">
+                <label class="form-label fw-bold">🌐 Supabase URL:</label>
+                <input type="text" id="config-url" class="form-control" placeholder="https://your-project.supabase.co">
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">🔑 Anon Key:</label>
+                <input type="password" id="config-key" class="form-control" placeholder="eyJhbGciOiJIUzI1NiIs...">
+                <small class="text-muted">
+                    <i class="fas fa-eye" style="cursor: pointer;" onclick="togglePassword()"></i> Hiện/Ẩn key
+                </small>
+            </div>
+            <button id="btn-test-connection" class="btn btn-primary w-100 mb-3">
+                <i class="fas fa-plug"></i> Kiểm tra kết nối
+            </button>
+            <div id="test-result"></div>
+            <button id="btn-save-config" class="btn btn-success w-100 mt-3" disabled>
+                <i class="fas fa-save"></i> Lưu cấu hình & Tiếp tục
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Hàm copy vào clipboard
+        function copyToClipboard(elementId) {
+            const input = document.getElementById(elementId);
+            input.select();
+            document.execCommand('copy');
+            showToast('Đã sao chép!', 'success');
+        }
+
+        function copySQL() {
+            const sqlCode = document.getElementById('sql-code').innerText;
+            navigator.clipboard.writeText(sqlCode).then(() => {
+                showToast('Đã sao chép SQL!', 'success');
+            });
+        }
+
+        function togglePassword() {
+            const keyInput = document.getElementById('config-key');
+            keyInput.type = keyInput.type === 'password' ? 'text' : 'password';
+        }
+
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed top-0 end-0 m-3`;
+            toast.style.zIndex = '9999';
+            toast.innerHTML = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Kiểm tra kết nối Supabase
+        document.getElementById('btn-test-connection').onclick = async () => {
+            const url = document.getElementById('config-url').value.trim();
+            const key = document.getElementById('config-key').value.trim();
+            const resultDiv = document.getElementById('test-result');
+            const saveBtn = document.getElementById('btn-save-config');
+            
+            if (!url || !key) {
+                resultDiv.innerHTML = '<div class="alert alert-danger">❌ Vui lòng nhập đầy đủ URL và Key!</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<div class="alert alert-info"><span class="loading"></span> Đang kiểm tra...</div>';
+            
+            try {
+                // Tạo client tạm thời để test
+                const supabaseClient = supabase.createClient(url, key);
+                
+                // Thử query bảng users
+                const { data, error } = await supabaseClient
+                    .from('users')
+                    .select('count', { count: 'exact', head: true });
+                
+                if (error) {
+                    if (error.message.includes('relation') && error.message.includes('does not exist')) {
+                        resultDiv.innerHTML = `
+                            <div class="alert alert-warning">
+                                ⚠️ Kết nối thành công nhưng CHƯA CÓ BẢNG!<br>
+                                Vui lòng chạy SQL ở bước 4 để tạo bảng.
+                            </div>
+                        `;
+                        saveBtn.disabled = false; // Vẫn cho phép lưu config
+                        saveBtn.dataset.url = url;
+                        saveBtn.dataset.key = key;
+                    } else {
+                        throw error;
+                    }
+                } else {
+                    resultDiv.innerHTML = '<div class="alert alert-success">✅ Kết nối thành công! Dữ liệu đã sẵn sàng.</div>';
+                    saveBtn.disabled = false;
+                    saveBtn.dataset.url = url;
+                    saveBtn.dataset.key = key;
+                }
+            } catch (err) {
+                console.error('Connection error:', err);
+                resultDiv.innerHTML = `<div class="alert alert-danger">❌ Kết nối thất bại: ${err.message}</div>`;
+                saveBtn.disabled = true;
+            }
+        };
+
+        // Lưu cấu hình
+        document.getElementById('btn-save-config').onclick = () => {
+            const url = document.getElementById('config-url').value.trim();
+            const key = document.getElementById('config-key').value.trim();
+            
+            if (!url || !key) {
+                showToast('Vui lòng nhập đầy đủ thông tin!', 'danger');
+                return;
+            }
+
+            // Lưu vào localStorage
+            const config = { supabaseUrl: url, supabaseAnonKey: key };
+            localStorage.setItem('supabase_config', JSON.stringify(config));
+            
+            // Tạo file supabase-config.js
+            const jsContent = `// Cấu hình Supabase - Tự động tạo từ trình cài đặt
+window.SUPABASE_CONFIG = {
+    url: '${url}',
+    anonKey: '${key}'
+};
+
+function getSupabaseConfig() {
+    return window.SUPABASE_CONFIG;
+}`;
+            
+            // Tạo blob và tải file
+            const blob = new Blob([jsContent], { type: 'application/javascript' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'supabase-config.js';
+            link.click();
+            URL.revokeObjectURL(link.href);
+            
+            showToast('✅ Đã lưu cấu hình! Chuyển đến trang đăng nhập...', 'success');
+            
+            // Chuyển sang trang login
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 1500);
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</body>
+</html>

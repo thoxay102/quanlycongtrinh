@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Quản Lý Công Trình</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="auth.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .login-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 28px;
+            padding: 40px 32px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.2);
+            backdrop-filter: blur(2px);
+            transition: transform 0.3s;
+        }
+        .login-card:hover { transform: translateY(-5px); }
+        .login-header { text-align: center; margin-bottom: 32px; }
+        .login-header h2 { color: #1e3c72; font-weight: 700; }
+        .input-group-text { background: white; border-right: none; cursor: pointer; }
+        .form-control { border-left: none; }
+        .btn-login {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border: none;
+            padding: 12px;
+            font-weight: bold;
+            border-radius: 40px;
+        }
+        .btn-login:hover { transform: scale(1.02); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+        footer { text-align: center; margin-top: 24px; font-size: 12px; color: #888; }
+    </style>
+</head>
+<body>
+<div class="login-card">
+    <div class="login-header">
+        <h2>🏗️ Quản Lý Công Trình</h2>
+        <p>Đăng nhập để tiếp tục</p>
+    </div>
+    <div id="alert-area"></div>
+    <form id="login-form">
+        <div class="mb-3">
+            <label class="form-label">Tên đăng nhập</label>
+            <input type="text" id="username" class="form-control" placeholder="Nhập tên đăng nhập" required autofocus>
+        </div>
+        <div class="mb-4">
+            <label class="form-label">Mật khẩu</label>
+            <div class="input-group">
+                <input type="password" id="password" class="form-control" placeholder="••••••" required>
+                <span class="input-group-text password-toggle" id="togglePassword">
+                    <i class="fas fa-eye-slash"></i>
+                </span>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 btn-login">Đăng nhập</button>
+    </form>
+    <footer>
+        <small>Liên hệ quản trị viên để được hỗ trợ</small>
+    </footer>
+</div>
+<script>
+   // Kiểm tra cấu hình Supabase trước khi load login
+    (function checkConfig() {
+        const savedConfig = localStorage.getItem('supabase_config');
+        if (!savedConfig) {
+            // Chưa cấu hình, chuyển sang trang setup
+            window.location.href = 'setup-config.html';
+            return;
+        }
+        
+        try {
+            const config = JSON.parse(savedConfig);
+            if (!config.supabaseUrl || !config.supabaseAnonKey) {
+                window.location.href = 'setup-config.html';
+            }
+        } catch(e) {
+            window.location.href = 'setup-config.html';
+        }
+    })();
+
+    (async function() {
+        if (!getSupabaseConfig()) { showConfigModal(); return; }
+        window.supabaseClient = supabase.createClient(getSupabaseConfig().url, getSupabaseConfig().anonKey);
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            togglePassword.querySelector('i').classList.toggle('fa-eye');
+            togglePassword.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+        document.getElementById('login-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            if (!username || !password) { showAlert('Vui lòng nhập đầy đủ thông tin', 'danger'); return; }
+            const result = await window.auth.login(username, password);
+            if (result.success) window.location.href = 'index.html';
+            else showAlert(result.error, 'danger');
+        };
+        function showAlert(msg, type) {
+            const alertDiv = document.getElementById('alert-area');
+            alertDiv.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show">${msg}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`;
+            setTimeout(() => { const a = alertDiv.querySelector('.alert'); if (a) a.remove(); }, 5000);
+        }
+    })();
+</script>
+</body>
+</html>

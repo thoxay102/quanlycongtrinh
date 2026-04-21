@@ -1,0 +1,81 @@
+{
+  "name": "Quản Lý Công Trình",
+  "short_name": "QLCT",
+  "description": "Ứng dụng quản lý công trình xây dựng",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "theme_color": "#007bff",
+  "background_color": "#ffffff",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshots/home.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Màn hình chính"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Chấm công",
+      "short_name": "Chấm công",
+      "description": "Chấm công nhanh",
+      "url": "/index.html?action=timesheet",
+      "icons": [{ "src": "icons/icon-timesheet.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Công trình",
+      "short_name": "CT",
+      "description": "Xem danh sách công trình",
+      "url": "/index.html?action=projects",
+      "icons": [{ "src": "icons/icon-project.png", "sizes": "96x96" }]
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "vi",
+  "prefer_related_applications": false
+}
